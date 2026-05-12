@@ -4,11 +4,12 @@ const sezonBaslangicTarihi = new Date('2026-05-29T20:00:00.000Z');
 
 function kalanSureyiFormatla(kalanMs) {
   const toplamSaniye = Math.max(0, Math.floor(kalanMs / 1000));
-  const saat = Math.floor(toplamSaniye / 3600);
+  const gun = Math.floor(toplamSaniye / 86400);
+  const saat = Math.floor((toplamSaniye % 86400) / 3600);
   const dakika = Math.floor((toplamSaniye % 3600) / 60);
   const saniye = toplamSaniye % 60;
 
-  return `${saat} saat ${dakika} dakika ${saniye} saniye`;
+  return `${gun} gün ${saat} saat ${dakika} dakika ${saniye} saniye`;
 }
 
 module.exports = {
