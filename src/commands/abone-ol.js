@@ -5,7 +5,7 @@ const { youtubeKanaliCoz, youtubeSonVideolariGetir } = require('../services/yout
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('abone-ol')
-    .setDescription('Bir YouTube kanalının yeni videolarını Discord kanalına bildirir.')
+    .setDescription('Bir YouTube kanalinin yeni videolarini Discord kanalina bildirir.')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addStringOption((option) =>
       option
@@ -16,7 +16,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName('discord_kanal_id')
-        .setDescription('Bildirimlerin gönderileceği Discord metin kanalı ID değeri.')
+        .setDescription('Bildirimlerin gonderilecegi Discord metin kanali ID degeri.')
         .setRequired(true),
     ),
 
@@ -28,21 +28,20 @@ module.exports = {
     const discordKanali = await interaction.client.channels.fetch(discordKanalId).catch(() => null);
 
     if (!discordKanali || !discordKanali.isTextBased()) {
-      await interaction.editReply('Geçersiz Discord kanal ID değeri. Bir metin kanalı ID değeri gir.');
+      await interaction.editReply('Gecersiz Discord kanal ID degeri. Bir metin kanali ID degeri gir.');
       return;
     }
 
     const youtubeKanali = await youtubeKanaliCoz(youtubeLinki);
 
     if (!youtubeKanali) {
-      await interaction.editReply('YouTube kanalı bulunamadı. Kanal linkini kontrol edip tekrar dene.');
+      await interaction.editReply('YouTube kanali bulunamadi. Kanal linkini kontrol edip tekrar dene.');
       return;
     }
 
     const sonVideolar = await youtubeSonVideolariGetir(youtubeKanali.id);
     const sonVideoId = sonVideolar[0]?.id || null;
-
-    abonelikEkle({
+    const sonuc = abonelikEkle({
       guildId: interaction.guildId,
       discordKanalId,
       youtubeKanalId: youtubeKanali.id,
@@ -51,8 +50,15 @@ module.exports = {
       sonVideoId,
     });
 
+    if (sonuc.zatenVardi) {
+      await interaction.editReply(
+        `${youtubeKanali.ad} kanali zaten <#${discordKanalId}> kanalinda takip ediliyor.`,
+      );
+      return;
+    }
+
     await interaction.editReply(
-      `${youtubeKanali.ad} kanalı <#${discordKanalId}> kanalında takip edilecek.`,
+      `${youtubeKanali.ad} kanali <#${discordKanalId}> kanalinda takip edilecek.`,
     );
   },
 };

@@ -41,13 +41,18 @@ function abonelikEkle(yeniAbonelik) {
     abonelikler[mevcutIndex] = {
       ...abonelikler[mevcutIndex],
       ...kayit,
+      olusturulmaTarihi: abonelikler[mevcutIndex].olusturulmaTarihi,
+      guncellenmeTarihi: new Date().toISOString(),
     };
   } else {
     abonelikler.push(kayit);
   }
 
   abonelikleriYaz(abonelikler);
-  return kayit;
+  return {
+    abonelik: mevcutIndex >= 0 ? abonelikler[mevcutIndex] : kayit,
+    zatenVardi: mevcutIndex >= 0,
+  };
 }
 
 function abonelikGuncelle(youtubeKanalId, discordKanalId, guncelAlanlar) {
