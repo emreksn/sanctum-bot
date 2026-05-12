@@ -11,4 +11,4 @@ COPY src ./src
 COPY scripts ./scripts
 COPY data ./data
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm run deploy && npm start"]
