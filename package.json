@@ -1,0 +1,16 @@
+{
+  "name": "sanctum-bot",
+  "version": "1.0.0",
+  "description": "Organized Discord bot built with discord.js.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node scripts/deploy-commands.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.26.4"
+  }
+}
