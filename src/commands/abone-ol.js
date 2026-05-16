@@ -41,6 +41,10 @@ module.exports = {
 
     const sonVideolar = await youtubeSonVideolariGetir(youtubeKanali.id);
     const sonVideoId = sonVideolar[0]?.id || null;
+    const sonVideoGecmisi = sonVideolar.slice(0, 5).map((video) => ({
+      id: video.id,
+      yayinTarihi: video.yayinTarihi,
+    }));
     const sonuc = abonelikEkle({
       guildId: interaction.guildId,
       discordKanalId,
@@ -48,6 +52,7 @@ module.exports = {
       youtubeKanalAdi: youtubeKanali.ad,
       youtubeKanalLinki: youtubeKanali.link,
       sonVideoId,
+      sonVideoGecmisi,
     });
 
     if (sonuc.zatenVardi) {
