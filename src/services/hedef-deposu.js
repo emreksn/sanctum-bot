@@ -27,6 +27,19 @@ function guildHedefleriniGetir(guildId) {
   return hedefleriOku().filter((hedef) => hedef.guildId === guildId);
 }
 
+function hedefiSirayaGoreBul(hedefler, guildId, sira) {
+  let guildSirasi = 0;
+
+  return hedefler.find((kayit) => {
+    if (kayit.guildId !== guildId) {
+      return false;
+    }
+
+    guildSirasi += 1;
+    return guildSirasi === sira;
+  });
+}
+
 function hedefEkle({ guildId, ad, puan }) {
   const hedefler = hedefleriOku();
   const ayniHedef = hedefler.find(
@@ -61,15 +74,7 @@ function hedefEkle({ guildId, ad, puan }) {
 
 function hedefTamamla({ guildId, sira, kullanici }) {
   const hedefler = hedefleriOku();
-  let guildSirasi = 0;
-  const hedef = hedefler.find((kayit) => {
-    if (kayit.guildId !== guildId) {
-      return false;
-    }
-
-    guildSirasi += 1;
-    return guildSirasi === sira;
-  });
+  const hedef = hedefiSirayaGoreBul(hedefler, guildId, sira);
 
   if (!hedef) {
     return {
@@ -91,6 +96,91 @@ function hedefTamamla({ guildId, sira, kullanici }) {
 
   return {
     hedef,
+  };
+}
+
+function hedefGeriAl({ guildId, sira }) {
+  const hedefler = hedefleriOku();
+  const hedef = hedefiSirayaGoreBul(hedefler, guildId, sira);
+
+  if (!hedef) {
+    return {
+      hata: 'bulunamadi',
+    };
+  }
+
+  if (!hedef.tamamlayanId) {
+    return {
+      hedef,
+      hata: 'tamamlanmamis',
+    };
+  }
+
+  const oncekiTamamlayanId = hedef.tamamlayanId;
+  hedef.tamamlayanId = null;
+  hedef.tamamlayanAdi = null;
+  hedef.tamamlanmaTarihi = null;
+  hedefleriYaz(hedefler);
+
+  return {
+    hedef,
+    oncekiTamamlayanId,
+  };
+}
+
+function hedefAdiniDegistir({ guildId, sira, yeniAd }) {
+  const hedefler = hedefleriOku();
+  const hedef = hedefiSirayaGoreBul(hedefler, guildId, sira);
+
+  if (!hedef) {
+    return {
+      hata: 'bulunamadi',
+    };
+  }
+
+  const ayniAdliHedef = hedefler.find(
+    (kayit) =>
+      kayit !== hedef &&
+      kayit.guildId === guildId &&
+      kayit.ad.toLocaleLowerCase('tr') === yeniAd.toLocaleLowerCase('tr'),
+  );
+
+  if (ayniAdliHedef) {
+    return {
+      hedef: ayniAdliHedef,
+      hata: 'zaten-var',
+    };
+  }
+
+  const eskiAd = hedef.ad;
+  hedef.ad = yeniAd;
+  hedef.guncellenmeTarihi = new Date().toISOString();
+  hedefleriYaz(hedefler);
+
+  return {
+    hedef,
+    eskiAd,
+  };
+}
+
+function hedefPuaniniDegistir({ guildId, sira, yeniPuan }) {
+  const hedefler = hedefleriOku();
+  const hedef = hedefiSirayaGoreBul(hedefler, guildId, sira);
+
+  if (!hedef) {
+    return {
+      hata: 'bulunamadi',
+    };
+  }
+
+  const eskiPuan = hedef.puan;
+  hedef.puan = yeniPuan;
+  hedef.guncellenmeTarihi = new Date().toISOString();
+  hedefleriYaz(hedefler);
+
+  return {
+    hedef,
+    eskiPuan,
   };
 }
 
@@ -143,7 +233,10 @@ function puanTablosuOlustur(hedefler) {
 
 module.exports = {
   guildHedefleriniGetir,
+  hedefAdiniDegistir,
   hedefEkle,
+  hedefGeriAl,
+  hedefPuaniniDegistir,
   hedefSil,
   hedefTamamla,
   puanTablosuOlustur,

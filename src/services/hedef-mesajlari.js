@@ -1,6 +1,6 @@
 const DISCORD_MESAJ_LIMITI = 2000;
 const { bigDaddyAdayiGetir, lilSlutAdayiGetir } = require('./hedef-rol-servisi');
-const { lilSlutBaslangicTarihi, lilSlutAktifMi } = require('./poe2-sezon');
+const { lilSlutBaslangicTarihi, lilSlutAktifMi, sezonBaslangicTarihi } = require('./poe2-sezon');
 
 function kalanSureyiFormatla(hedefTarih, simdi = new Date()) {
   const kalanMs = Math.max(0, hedefTarih.getTime() - simdi.getTime());
@@ -74,6 +74,10 @@ function hedefSatiriOlustur(hedef, index) {
 function liderSatirlariOlustur(puanTablosu) {
   const bigDaddy = bigDaddyAdayiGetir(puanTablosu);
   const lilSlut = lilSlutAdayiGetir(puanTablosu);
+  const sezonBasladiMi = Date.now() >= sezonBaslangicTarihi.getTime();
+  const bigDaddyBeklemeSatiri = sezonBasladiMi
+    ? '👑 Big Daddy: 10+ Big Daddy puanlı lider yok.'
+    : `👑 Big Daddy: ${kalanSureyiFormatla(sezonBaslangicTarihi)} sonra aktif olacak.`;
   const lilSlutBeklemeSatiri = lilSlutAktifMi()
     ? null
     : `💄 Lil Slut: ${kalanSureyiFormatla(lilSlutBaslangicTarihi)} sonra aktif olacak.`;
@@ -86,7 +90,7 @@ function liderSatirlariOlustur(puanTablosu) {
       )
       : ['Henüz puan alan yok.']),
     '',
-    bigDaddy ? `👑 Big Daddy: <@${bigDaddy.kullaniciId}> (${bigDaddy.puan} Big Daddy puanı)` : '👑 Big Daddy: 10+ Big Daddy puanlı lider yok.',
+    bigDaddy ? `👑 Big Daddy: <@${bigDaddy.kullaniciId}> (${bigDaddy.puan} Big Daddy puanı)` : bigDaddyBeklemeSatiri,
     lilSlut ? `💄 Lil Slut: <@${lilSlut.kullaniciId}> (${lilSlut.puan} Big Daddy puanı)` : lilSlutBeklemeSatiri,
   ];
 }

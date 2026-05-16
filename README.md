@@ -33,6 +33,9 @@ Hedef komutları:
 /hedefler
 /hedef-skor
 /hedef-tamamla sira:1 kisi:@kullanici
+/hedef-geri-al sira:1
+/hedef-duzenle sira:1 alan:name yeni_ad:"Yeni hedef adi"
+/hedef-duzenle sira:1 alan:point yeni_puan:10
 /hedef-sil sira:1
 /hedef-rol-ayarla big_daddy:@BigDaddyRole lil_slut:@LilSlutRole
 ```
