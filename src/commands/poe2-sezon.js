@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-
-const sezonBaslangicTarihi = new Date('2026-05-29T20:00:00.000Z');
+const { sezonBaslangicTarihi } = require('../services/poe2-sezon');
 
 function kalanSureyiFormatla(kalanMs) {
   const toplamSaniye = Math.max(0, Math.floor(kalanMs / 1000));

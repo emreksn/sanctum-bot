@@ -20,7 +20,7 @@ module.exports = {
       console.error(`[interactions] Command failed: ${interaction.commandName}`, error);
 
       const response = {
-        content: 'There was an error while executing this command.',
+        content: 'Bu komut çalıştırılırken bir hata oluştu.',
         ephemeral: true,
       };
 

@@ -26,6 +26,21 @@ YouTube kanalı takip etmek için:
 /abone-ol youtube_linki:https://www.youtube.com/@kanal discord_kanal_id:123456789012345678
 ```
 
+Hedef komutları:
+
+```text
+/hedef-ekle ad:"Ilk divine orb dusurme" puan:5
+/hedefler
+/hedef-skor
+/hedef-tamamla sira:1 kisi:@kullanici
+/hedef-sil sira:1
+/hedef-rol-ayarla big_daddy:@BigDaddyRole lil_slut:@LilSlutRole
+```
+
+`/hedefler` hedefleri eklenme sırasına göre numaralı listeler, tamamlanma durumunu gösterir ve en altta liderleri Big Daddy puanına göre sıralar. `/hedef-skor` sadece liderleri gösterir.
+
+Big Daddy rolü 10+ Big Daddy puanlı lider kişide tutulur. Lil Slut rolü PoE2 sezon başlangıcından 4 gün sonra en düşük puanlı kişide tutulur. Roller `/hedef-tamamla` sonrasında ve bot açıkken günlük olarak güncellenir.
+
 Bot yeni video gördüğünde hedef kanala şu formatta mesaj gönderir:
 
 ```text
