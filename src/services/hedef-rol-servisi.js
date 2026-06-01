@@ -4,6 +4,7 @@ const {
   guildRolAyariGetir,
   tumRolAyarlariGetir,
 } = require('./hedef-rol-deposu');
+const { guildPuanTablosunaKatilimcilariEkle } = require('./katilimci-deposu');
 const { lilSlutAktifMi } = require('./poe2-sezon');
 
 const BIG_DADDY_MINIMUM_PUAN = 10;
@@ -19,12 +20,46 @@ function bigDaddyAdayiGetir(puanTablosu) {
   return lider;
 }
 
-function lilSlutAdayiGetir(puanTablosu, simdi = new Date()) {
-  if (!lilSlutAktifMi(simdi) || puanTablosu.length < 2) {
+function kayitSirasiKarsilastir(a, b) {
+  const aKatilim = a.katilimTarihi ? new Date(a.katilimTarihi).getTime() : Number.MAX_SAFE_INTEGER;
+  const bKatilim = b.katilimTarihi ? new Date(b.katilimTarihi).getTime() : Number.MAX_SAFE_INTEGER;
+
+  if (aKatilim !== bKatilim) {
+    return aKatilim - bKatilim;
+  }
+
+  return a.kullaniciAdi.localeCompare(b.kullaniciAdi);
+}
+
+function lilSlutAdayiGetir(
+  puanTablosu,
+  simdi = new Date(),
+  mevcutLilSlutKullaniciId = null,
+  mevcutLilSlutPuani = null,
+) {
+  if (!lilSlutAktifMi(simdi)) {
     return null;
   }
 
-  return [...puanTablosu].sort((a, b) => a.puan - b.puan || a.kullaniciAdi.localeCompare(b.kullaniciAdi))[0];
+  const mevcutLilSlut = puanTablosu.find((kayit) => kayit.kullaniciId === mevcutLilSlutKullaniciId);
+  const mevcutPuan = mevcutLilSlut?.puan || 0;
+
+  if (mevcutLilSlutKullaniciId && (mevcutLilSlutPuani === null || mevcutPuan <= mevcutLilSlutPuani)) {
+    return mevcutLilSlut || {
+      kullaniciId: mevcutLilSlutKullaniciId,
+      kullaniciAdi: mevcutLilSlutKullaniciId,
+      puan: mevcutPuan,
+      katilimTarihi: null,
+    };
+  }
+
+  const sifirPuanlilar = puanTablosu.filter((kayit) => kayit.puan === 0);
+
+  if (sifirPuanlilar.length === 0) {
+    return null;
+  }
+
+  return [...sifirPuanlilar].sort(kayitSirasiKarsilastir)[0];
 }
 
 async function rolAta(guild, rolId, hedefKullaniciId, oncekiKullaniciId) {
@@ -98,9 +133,17 @@ async function hedefRolleriniGuncelle(guild, simdi = new Date()) {
     };
   }
 
-  const puanTablosu = puanTablosuOlustur(guildHedefleriniGetir(guild.id));
+  const puanTablosu = guildPuanTablosunaKatilimcilariEkle(
+    guild.id,
+    puanTablosuOlustur(guildHedefleriniGetir(guild.id)),
+  );
   const bigDaddy = bigDaddyAdayiGetir(puanTablosu);
-  const lilSlut = lilSlutAdayiGetir(puanTablosu, simdi);
+  const lilSlut = lilSlutAdayiGetir(
+    puanTablosu,
+    simdi,
+    ayar.aktifLilSlutKullaniciId || null,
+    Number.isFinite(ayar.aktifLilSlutPuani) ? ayar.aktifLilSlutPuani : null,
+  );
   const bigDaddyRolSonucu = await rolAta(
     guild,
     ayar.bigDaddyRolId,
@@ -119,6 +162,7 @@ async function hedefRolleriniGuncelle(guild, simdi = new Date()) {
     guildId: guild.id,
     aktifBigDaddyKullaniciId: bigDaddyRolSonucu.aktifKullaniciId,
     aktifLilSlutKullaniciId: lilSlutRolSonucu.aktifKullaniciId,
+    aktifLilSlutPuani: lilSlutRolSonucu.aktifKullaniciId ? lilSlut?.puan || 0 : null,
   });
 
   return {

@@ -32,6 +32,7 @@ Hedef komutları:
 /hedef-ekle ad:"Ilk divine orb dusurme" puan:5
 /hedefler
 /hedef-skor
+/katıl
 /hedef-tamamla sira:1 kisi:@kullanici
 /hedef-geri-al sira:1
 /hedef-duzenle sira:1 alan:name yeni_ad:"Yeni hedef adi"
@@ -40,9 +41,9 @@ Hedef komutları:
 /hedef-rol-ayarla big_daddy:@BigDaddyRole lil_slut:@LilSlutRole
 ```
 
-`/hedefler` hedefleri eklenme sırasına göre numaralı listeler, tamamlanma durumunu gösterir ve en altta liderleri Big Daddy puanına göre sıralar. `/hedef-skor` sadece liderleri gösterir.
+`/katıl` kullanıcının kendisini liderliğe kaydetmesini sağlar. Puan almış eski oyuncular liderlikte kalır; 0 puanlı yeni oyuncular sadece kendileri katılırsa Lil Slut riskine girer. `/hedefler` hedefleri eklenme sırasına göre numaralı listeler, tamamlanma durumunu gösterir ve en altta liderleri Big Daddy puanına göre sıralar. `/hedef-skor` sadece liderleri gösterir.
 
-Big Daddy rolü 10+ Big Daddy puanlı lider kişide tutulur. Lil Slut rolü PoE2 sezon başlangıcından 4 gün sonra en düşük puanlı kişide tutulur. Roller `/hedef-tamamla` sonrasında ve bot açıkken günlük olarak güncellenir.
+Big Daddy rolü 10+ Big Daddy puanlı lider kişide tutulur. Lil Slut rolü PoE2 sezon başlangıcından 4 gün sonra 0 puanlı katılımcılardan ilk katılana verilir. Mevcut Lil Slut 0 puanda kaldığı sürece rol onda kalır; puan aldığında sıradaki 0 puanlı katılımcıya geçer. Roller `/katıl`, `/hedef-tamamla` sonrasında ve bot açıkken günlük olarak güncellenir.
 
 Bot yeni video gördüğünde hedef kanala şu formatta mesaj gönderir:
 

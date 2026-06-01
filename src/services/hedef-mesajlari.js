@@ -71,9 +71,14 @@ function hedefSatiriOlustur(hedef, index) {
   return `${index + 1}. ${hedef.ad} - ${hedef.puan} Big Daddy puanı - ${durum}`;
 }
 
-function liderSatirlariOlustur(puanTablosu) {
+function liderSatirlariOlustur(puanTablosu, secenekler = {}) {
   const bigDaddy = bigDaddyAdayiGetir(puanTablosu);
-  const lilSlut = lilSlutAdayiGetir(puanTablosu);
+  const lilSlut = lilSlutAdayiGetir(
+    puanTablosu,
+    new Date(),
+    secenekler.mevcutLilSlutKullaniciId || null,
+    Number.isFinite(secenekler.mevcutLilSlutPuani) ? secenekler.mevcutLilSlutPuani : null,
+  );
   const sezonBasladiMi = Date.now() >= sezonBaslangicTarihi.getTime();
   const bigDaddyBeklemeSatiri = sezonBasladiMi
     ? '👑 Big Daddy: 10+ Big Daddy puanlı lider yok.'

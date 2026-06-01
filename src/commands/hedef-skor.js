@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { guildHedefleriniGetir, puanTablosuOlustur } = require('../services/hedef-deposu');
 const { liderSatirlariOlustur, mesajlariBol } = require('../services/hedef-mesajlari');
+const { guildRolAyariGetir } = require('../services/hedef-rol-deposu');
+const { guildPuanTablosunaKatilimcilariEkle } = require('../services/katilimci-deposu');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,8 +11,15 @@ module.exports = {
 
   async execute(interaction) {
     const hedefler = guildHedefleriniGetir(interaction.guildId);
-    const puanTablosu = puanTablosuOlustur(hedefler);
-    const mesajlar = mesajlariBol(liderSatirlariOlustur(puanTablosu));
+    const puanTablosu = guildPuanTablosunaKatilimcilariEkle(
+      interaction.guildId,
+      puanTablosuOlustur(hedefler),
+    );
+    const rolAyari = guildRolAyariGetir(interaction.guildId);
+    const mesajlar = mesajlariBol(liderSatirlariOlustur(puanTablosu, {
+      mevcutLilSlutKullaniciId: rolAyari?.aktifLilSlutKullaniciId || null,
+      mevcutLilSlutPuani: Number.isFinite(rolAyari?.aktifLilSlutPuani) ? rolAyari.aktifLilSlutPuani : null,
+    }));
 
     await interaction.reply({
       content: mesajlar[0],

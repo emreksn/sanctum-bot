@@ -61,7 +61,12 @@ function guildRolAyariKaydet({ guildId, bigDaddyRolId, lilSlutRolId }) {
   return yeniKayit;
 }
 
-function guildRolAtamalariniKaydet({ guildId, aktifBigDaddyKullaniciId, aktifLilSlutKullaniciId }) {
+function guildRolAtamalariniKaydet({
+  guildId,
+  aktifBigDaddyKullaniciId,
+  aktifLilSlutKullaniciId,
+  aktifLilSlutPuani,
+}) {
   const kayitlar = rolleriOku();
   const mevcut = kayitlar.find((kayit) => kayit.guildId === guildId);
 
@@ -71,6 +76,7 @@ function guildRolAtamalariniKaydet({ guildId, aktifBigDaddyKullaniciId, aktifLil
 
   mevcut.aktifBigDaddyKullaniciId = aktifBigDaddyKullaniciId || null;
   mevcut.aktifLilSlutKullaniciId = aktifLilSlutKullaniciId || null;
+  mevcut.aktifLilSlutPuani = aktifLilSlutKullaniciId ? aktifLilSlutPuani : null;
   mevcut.guncellenmeTarihi = new Date().toISOString();
   rolleriYaz(kayitlar);
   return mevcut;
