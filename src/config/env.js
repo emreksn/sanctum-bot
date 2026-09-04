@@ -38,7 +38,6 @@ if (missingEnv.length > 0) {
 const config = {
   discordToken: process.env.DISCORD_TOKEN,
   discordClientId: process.env.DISCORD_CLIENT_ID,
-  youtubeKontrolAraligiMs: Number(process.env.YOUTUBE_KONTROL_ARALIGI_MS || 300000),
 };
 
 module.exports = { config };

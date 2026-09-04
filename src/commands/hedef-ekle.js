@@ -4,7 +4,7 @@ const { hedefEkle } = require('../services/hedef-deposu');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('hedef-ekle')
-    .setDescription('Big Daddy puanı veren yeni bir hedef ekler.')
+    .setDescription('Puan veren yeni bir hedef ekler.')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addStringOption((option) =>
       option
@@ -16,7 +16,7 @@ module.exports = {
     .addIntegerOption((option) =>
       option
         .setName('puan')
-        .setDescription('Hedef tamamlanınca verilecek Big Daddy puanı.')
+        .setDescription('Hedef tamamlanınca verilecek puan.')
         .setRequired(true)
         .setMinValue(1),
     ),
@@ -48,7 +48,7 @@ module.exports = {
     }
 
     await interaction.reply({
-      content: `Hedef eklendi: **${sonuc.hedef.ad}** (${sonuc.hedef.puan} Big Daddy puanı)`,
+      content: `Hedef eklendi: **${sonuc.hedef.ad}** (${sonuc.hedef.puan} puan)`,
       ephemeral: true,
     });
   },

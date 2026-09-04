@@ -1,6 +1,6 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { hedefAdiniDegistir, hedefPuaniniDegistir } = require('../services/hedef-deposu');
-const { hedefRolleriniGuncelle } = require('../services/hedef-rol-servisi');
+const { liderlikMesajiniSessizceGuncelle } = require('../services/liderlik-mesaji-servisi');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -34,7 +34,7 @@ module.exports = {
     .addIntegerOption((option) =>
       option
         .setName('yeni_puan')
-        .setDescription('alan:point seçildiğinde hedefin yeni Big Daddy puanı.')
+        .setDescription('alan:point seçildiğinde hedefin yeni puanı.')
         .setRequired(false)
         .setMinValue(1),
     ),
@@ -106,21 +106,13 @@ module.exports = {
       return;
     }
 
-    const rolSonucu = await hedefRolleriniGuncelle(interaction.guild);
-    const rolSatirlari = rolSonucu.atlandi
-      ? []
-      : [
-        rolSonucu.bigDaddy ? `👑 Big Daddy: <@${rolSonucu.bigDaddy.kullaniciId}> (${rolSonucu.bigDaddy.puan} Big Daddy puanı)` : '👑 Big Daddy: 10+ Big Daddy puanlı lider yok.',
-        rolSonucu.lilSlut ? `💄 Lil Slut: <@${rolSonucu.lilSlut.kullaniciId}> (${rolSonucu.lilSlut.puan} Big Daddy puanı)` : null,
-        ...(rolSonucu.uyarilar || []),
-      ].filter(Boolean);
+    await liderlikMesajiniSessizceGuncelle(interaction);
 
     await interaction.editReply({
       content: [
         `#${sira} hedef puanı değiştirildi: **${sonuc.hedef.ad}**`,
-        `Eski: **${sonuc.eskiPuan}** Big Daddy puanı`,
-        `Yeni: **${sonuc.hedef.puan}** Big Daddy puanı`,
-        ...rolSatirlari,
+        `Eski: **${sonuc.eskiPuan}** puan`,
+        `Yeni: **${sonuc.hedef.puan}** puan`,
       ].join('\n'),
       allowedMentions: { users: [] },
     });

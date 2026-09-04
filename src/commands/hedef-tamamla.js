@@ -1,6 +1,6 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { hedefTamamla } = require('../services/hedef-deposu');
-const { hedefRolleriniGuncelle } = require('../services/hedef-rol-servisi');
+const { liderlikMesajiniSessizceGuncelle } = require('../services/liderlik-mesaji-servisi');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -47,19 +47,10 @@ module.exports = {
       return;
     }
 
-    const rolSonucu = await hedefRolleriniGuncelle(interaction.guild);
-    const rolSatirlari = [
-      rolSonucu.bigDaddy ? `👑 Big Daddy: <@${rolSonucu.bigDaddy.kullaniciId}> (${rolSonucu.bigDaddy.puan} Big Daddy puanı)` : null,
-      rolSonucu.lilSlut ? `💄 Lil Slut: <@${rolSonucu.lilSlut.kullaniciId}> (${rolSonucu.lilSlut.puan} Big Daddy puanı)` : null,
-      ...(rolSonucu.uyarilar || []),
-    ].filter(Boolean);
+    await liderlikMesajiniSessizceGuncelle(interaction);
 
     await interaction.editReply({
-      content: [
-        `<@${kullanici.id}> **${sonuc.hedef.ad}** hedefini tamamladı ve ${sonuc.hedef.puan} Big Daddy puanı kazandı.`,
-        rolSatirlari.length > 0 ? '' : null,
-        ...rolSatirlari,
-      ].filter(Boolean).join('\n'),
+      content: `<@${kullanici.id}> **${sonuc.hedef.ad}** hedefini tamamladı ve ${sonuc.hedef.puan} puan kazandı.`,
       allowedMentions: { users: [kullanici.id] },
     });
   },

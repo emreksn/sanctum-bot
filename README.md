@@ -1,6 +1,6 @@
-# Sanctum Bot
+# Sanctum Leaderboard Bot
 
-`discord.js` v14 ile hazırlanmış organize Discord bot altyapısı.
+`discord.js` v14 ile hazırlanmış kalıcı liderlik tablosu ve hedef botu.
 
 ## Kurulum
 
@@ -18,98 +18,60 @@ npm run deploy
 npm start
 ```
 
+## Liderlik tablosu
+
+Sunucu yöneticisi `/hedef-skor` komutunu liderlik tablosunun bulunacağı kanalda bir kez çalıştırır. Bot tek bir embed mesajı oluşturur ve sabitler. Komut tekrar çalıştırılırsa yeni mesaj göndermek yerine mevcut mesaja özel bir bağlantı döndürür.
+
+Tablo şu işlemlerden sonra otomatik güncellenir:
+
+- Bir oyuncunun `/katıl` ile liderliğe katılması
+- Bir hedefin tamamlanması veya geri alınması
+- Tamamlanmış bir hedefin puanının değiştirilmesi
+- Bir hedefin silinmesi
+- Botun yeniden başlatılması ve günlük kontrol
+
+Mesaj silinirse bir sonraki güncellemede aynı kanalda yeniden oluşturulur. Kanal silinirse bir yönetici `/hedef-skor` komutunu yeni kanalda çalıştırarak tabloyu yeniden oluşturabilir.
+
+Botun hedef kanalda Mesajları Görüntüle, Mesaj Gönder, Bağlantı Yerleştir ve Mesajları Yönet izinlerine ihtiyacı vardır.
+
 ## Komutlar
 
-YouTube kanalı takip etmek için:
-
 ```text
-/abone-ol youtube_linki:https://www.youtube.com/@kanal discord_kanal_id:123456789012345678
-```
-
-Hedef komutları:
-
-```text
-/hedef-ekle ad:"Ilk divine orb dusurme" puan:5
-/hedefler
 /hedef-skor
 /katıl
+/hedefler
+/hedef-ekle ad:"İlk divine orb düşürme" puan:5
 /hedef-tamamla sira:1 kisi:@kullanici
 /hedef-geri-al sira:1
-/hedef-duzenle sira:1 alan:name yeni_ad:"Yeni hedef adi"
+/hedef-duzenle sira:1 alan:name yeni_ad:"Yeni hedef adı"
 /hedef-duzenle sira:1 alan:point yeni_puan:10
 /hedef-sil sira:1
-/hedef-rol-ayarla big_daddy:@BigDaddyRole lil_slut:@LilSlutRole
 ```
 
-`/katıl` kullanıcının kendisini liderliğe kaydetmesini sağlar. Puan almış eski oyuncular liderlikte kalır; 0 puanlı yeni oyuncular sadece kendileri katılırsa Lil Slut riskine girer. `/hedefler` hedefleri eklenme sırasına göre numaralı listeler, tamamlanma durumunu gösterir ve en altta liderleri Big Daddy puanına göre sıralar. `/hedef-skor` sadece liderleri gösterir.
+`/katıl`, 0 puanlı bir oyuncuyu da liderlik tablosuna ekler. Puan kazanan oyuncular katıl komutunu kullanmamış olsalar bile tabloda görünür.
 
-Big Daddy rolü 10+ Big Daddy puanlı lider kişide tutulur. Lil Slut rolü PoE2 sezon başlangıcından 4 gün sonra 0 puanlı katılımcılardan ilk katılana verilir. Mevcut Lil Slut 0 puanda kaldığı sürece rol onda kalır; puan aldığında sıradaki 0 puanlı katılımcıya geçer. Roller `/katıl`, `/hedef-tamamla` sonrasında ve bot açıkken günlük olarak güncellenir.
+Yeni lig 4 Eylül 2026 saat 22:00'de (GMT+2) başlar. Önceki ligin hedefleri, katılımcıları ve puanları ilk açılışta bir kez sıfırlanır. Eski Big Daddy ve Lil Slut rolleri Discord sunucusundan silinir; yeni sistem herhangi bir puan rolü vermez.
 
-Bot yeni video gördüğünde hedef kanala şu formatta mesaj gönderir:
+## Docker
 
-```text
-Kanal Adı kanalı yeni bir video yükledi:
-https://www.youtube.com/watch?v=...
-```
-
-## Dokploy / Docker
-
-Projede minimal `node:22-alpine` Dockerfile bulunur.
-
-Dokploy üzerinde bu environment variable değerlerini tanımla:
-
-```text
-DISCORD_TOKEN=your_bot_token_here
-DISCORD_CLIENT_ID=your_application_client_id_here
-YOUTUBE_KONTROL_ARALIGI_MS=300000
-```
-
-Bu bot HTTP uygulaması değil, worker process olarak çalışır. Port expose etmez.
-
-Aboneliklerin deployment sonrasında kaybolmaması için Dokploy üzerinde `/app/data` için volume tanımla.
-
-Lokal build:
+Bu bot bir worker process olarak çalışır ve port açmaz. Kalıcı liderlik, hedef ve rol kayıtlarının deployment sonrasında korunması için Dokploy üzerinde `/app/data` dizinine volume bağla.
 
 ```bash
 docker build -t sanctum-bot .
-```
-
-Lokal çalıştırma:
-
-```bash
 docker run --env-file .env sanctum-bot
 ```
 
-## Yapi
+## Yapı
 
 ```text
 src/
-  commands/       Slash komut modülleri
-  config/         Ortam ve runtime ayarları
-  events/         Discord client event modülleri
-  handlers/       Komut ve event yükleyiciler
-  services/       YouTube takip ve veri servisleri
-  index.js        Bot giris noktasi
+  commands/       Liderlik ve hedef slash komutları
+  config/         Ortam ayarları
+  events/         Discord olayları
+  handlers/       Komut ve olay yükleyicileri
+  services/       Liderlik, hedef, katılımcı ve rol servisleri
+  index.js        Bot giriş noktası
 scripts/
   deploy-commands.js
-data/
-  abonelikler.json
-```
-
-## Komut Ekleme
-
-`src/commands` içinde bir dosya oluştur, `data` ve `execute` export et.
-
-```js
-const { SlashCommandBuilder } = require('discord.js');
-
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('merhaba')
-    .setDescription('Merhaba mesajı gönderir.'),
-
-  async execute(interaction) {
-    await interaction.reply('Merhaba.');
-  },
-};
+data/             Kalıcı çalışma verileri
 ```

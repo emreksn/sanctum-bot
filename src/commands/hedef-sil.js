@@ -1,6 +1,6 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { hedefSil } = require('../services/hedef-deposu');
-const { hedefRolleriniGuncelle } = require('../services/hedef-rol-servisi');
+const { liderlikMesajiniSessizceGuncelle } = require('../services/liderlik-mesaji-servisi');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,17 +29,10 @@ module.exports = {
       return;
     }
 
-    const rolSonucu = await hedefRolleriniGuncelle(interaction.guild);
+    await liderlikMesajiniSessizceGuncelle(interaction);
     const silinenHedefSatiri = sonuc.hedef.tamamlayanId
-      ? `Silinen hedef <@${sonuc.hedef.tamamlayanId}> tarafından tamamlanmıştı, ${sonuc.hedef.puan} Big Daddy puanı puan tablosundan düşüldü.`
+      ? `Silinen hedef <@${sonuc.hedef.tamamlayanId}> tarafından tamamlanmıştı, ${sonuc.hedef.puan} puan tablodan düşüldü.`
       : 'Silinen hedef tamamlanmamıştı, puan tablosu değişmedi.';
-    const rolSatirlari = rolSonucu.atlandi
-      ? []
-      : [
-        rolSonucu.bigDaddy ? `👑 Big Daddy: <@${rolSonucu.bigDaddy.kullaniciId}> (${rolSonucu.bigDaddy.puan} Big Daddy puanı)` : '👑 Big Daddy: 10+ Big Daddy puanlı lider yok.',
-        rolSonucu.lilSlut ? `💄 Lil Slut: <@${rolSonucu.lilSlut.kullaniciId}> (${rolSonucu.lilSlut.puan} Big Daddy puanı)` : null,
-        ...(rolSonucu.uyarilar || []),
-      ].filter(Boolean);
 
     await interaction.editReply({
       content: [
@@ -47,7 +40,6 @@ module.exports = {
         silinenHedefSatiri,
         '',
         'Kalan hedefler /hedefler içinde yeniden numaralandırıldı.',
-        ...rolSatirlari,
       ].join('\n'),
       allowedMentions: { users: [] },
     });

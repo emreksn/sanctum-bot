@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { guildHedefleriniGetir, puanTablosuOlustur } = require('../services/hedef-deposu');
 const { hedefSatiriOlustur, liderSatirlariOlustur, mesajlariBol } = require('../services/hedef-mesajlari');
-const { guildRolAyariGetir } = require('../services/hedef-rol-deposu');
 const { guildPuanTablosunaKatilimcilariEkle } = require('../services/katilimci-deposu');
 
 module.exports = {
@@ -21,15 +20,11 @@ module.exports = {
       interaction.guildId,
       puanTablosuOlustur(hedefler),
     );
-    const rolAyari = guildRolAyariGetir(interaction.guildId);
     const satirlar = [
       '**Hedefler**',
       ...hedefler.map(hedefSatiriOlustur),
       '',
-      ...liderSatirlariOlustur(puanTablosu, {
-        mevcutLilSlutKullaniciId: rolAyari?.aktifLilSlutKullaniciId || null,
-        mevcutLilSlutPuani: Number.isFinite(rolAyari?.aktifLilSlutPuani) ? rolAyari.aktifLilSlutPuani : null,
-      }),
+      ...liderSatirlariOlustur(puanTablosu),
     ];
     const mesajlar = mesajlariBol(satirlar);
 

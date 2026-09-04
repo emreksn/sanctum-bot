@@ -1,36 +1,26 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { guildHedefleriniGetir, puanTablosuOlustur } = require('../services/hedef-deposu');
-const { liderSatirlariOlustur, mesajlariBol } = require('../services/hedef-mesajlari');
-const { guildRolAyariGetir } = require('../services/hedef-rol-deposu');
-const { guildPuanTablosunaKatilimcilariEkle } = require('../services/katilimci-deposu');
+const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const { liderlikMesajiniGuncelle } = require('../services/liderlik-mesaji-servisi');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('hedef-skor')
-    .setDescription('Big Daddy puanı lider tablosunu listeler.'),
+    .setDescription('Sabit liderlik tablosunu gösterir.')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .setDMPermission(false),
 
   async execute(interaction) {
-    const hedefler = guildHedefleriniGetir(interaction.guildId);
-    const puanTablosu = guildPuanTablosunaKatilimcilariEkle(
-      interaction.guildId,
-      puanTablosuOlustur(hedefler),
-    );
-    const rolAyari = guildRolAyariGetir(interaction.guildId);
-    const mesajlar = mesajlariBol(liderSatirlariOlustur(puanTablosu, {
-      mevcutLilSlutKullaniciId: rolAyari?.aktifLilSlutKullaniciId || null,
-      mevcutLilSlutPuani: Number.isFinite(rolAyari?.aktifLilSlutPuani) ? rolAyari.aktifLilSlutPuani : null,
-    }));
-
-    await interaction.reply({
-      content: mesajlar[0],
-      allowedMentions: { users: [] },
+    await interaction.deferReply({ ephemeral: true });
+    const sonuc = await liderlikMesajiniGuncelle({
+      client: interaction.client,
+      guildId: interaction.guildId,
+      hedefKanal: interaction.channel,
     });
 
-    for (const mesaj of mesajlar.slice(1)) {
-      await interaction.followUp({
-        content: mesaj,
-        allowedMentions: { users: [] },
-      });
-    }
+    await interaction.editReply([
+      `Liderlik tablosu burada: ${sonuc.mesaj.url}`,
+      sonuc.sabitlemeHatasi
+        ? 'Mesaj oluşturuldu ancak sabitlenemedi. Bot rolüne Mesajları Yönet izni verip komutu tekrar çalıştır.'
+        : null,
+    ].filter(Boolean).join('\n'));
   },
 };
