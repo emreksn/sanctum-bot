@@ -1,8 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const YENI_LIG_ID = '2026-09-04-22-gmt-plus-2';
+const YENI_LIG_ID = '2026-09-04-22-gmt-plus-2-challenges-v1';
 const dataKlasoru = path.join(process.cwd(), 'data');
+const hedefSablonuDosyasi = path.join(__dirname, '..', 'config', 'yeni-lig-hedefleri.json');
 const ligDurumuDosyasi = path.join(dataKlasoru, 'lig-durumu.json');
 const eskiRolAyarlariDosyasi = path.join(dataKlasoru, 'hedef-rolleri.json');
 const hedefDosyasi = path.join(dataKlasoru, 'hedefler.json');
@@ -75,7 +76,21 @@ async function yeniLigiHazirla(client) {
   const zatenHazir = ligDurumu?.ligId === YENI_LIG_ID;
 
   if (!zatenHazir) {
-    jsonYaz(hedefDosyasi, []);
+    const hedefSablonlari = jsonOku(hedefSablonuDosyasi, []);
+    const olusturulmaTarihi = new Date().toISOString();
+    const hedefler = [...client.guilds.cache.keys()].flatMap((guildId) =>
+      hedefSablonlari.map((hedef) => ({
+        guildId,
+        ad: hedef.ad,
+        puan: hedef.puan,
+        tamamlayanId: null,
+        tamamlayanAdi: null,
+        tamamlanmaTarihi: null,
+        olusturulmaTarihi,
+      })),
+    );
+
+    jsonYaz(hedefDosyasi, hedefler);
     jsonYaz(katilimciDosyasi, []);
     jsonYaz(ligDurumuDosyasi, {
       ligId: YENI_LIG_ID,

@@ -54,6 +54,8 @@ Botun hedef kanalda Mesajları Görüntüle, Mesaj Gönder, Bağlantı Yerleşti
 
 Yeni lig 4 Eylül 2026 saat 22:00'de (GMT+2) başlar. Önceki ligin hedefleri, katılımcıları ve puanları ilk açılışta bir kez sıfırlanır. Eski Big Daddy ve Lil Slut rolleri Discord sunucusundan silinir; yeni sistem herhangi bir puan rolü vermez.
 
+Yeni lig challenge listesi `src/config/yeni-lig-hedefleri.json` dosyasında tutulur ve ilgili deployment'ın ilk açılışında sunucular için otomatik oluşturulur.
+
 ## Docker
 
 Bu bot bir worker process olarak çalışır ve port açmaz. Kalıcı liderlik, hedef ve rol kayıtlarının deployment sonrasında korunması için Dokploy üzerinde `/app/data` dizinine volume bağla.
