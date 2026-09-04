@@ -67,11 +67,42 @@ function liderlikEmbedleriniOlustur(guildId) {
   });
 }
 
-async function liderlikMesajiniGuncelle({ client, guildId, hedefKanal = null }) {
+async function eskiMesajiSil(client, ayar) {
+  if (!ayar?.kanalId || !ayar?.mesajId) {
+    return;
+  }
+
+  const eskiKanal = await client.channels.fetch(ayar.kanalId).catch(() => null);
+
+  if (!eskiKanal?.messages) {
+    return;
+  }
+
+  await eskiKanal.messages.delete(ayar.mesajId).catch((error) => {
+    if (Number(error.code) !== 10008) {
+      console.warn(`[liderlik-mesaji] Eski mesaj silinemedi (${ayar.guildId}): ${error.message}`);
+    }
+  });
+}
+
+async function liderlikMesajiniGuncelle({
+  client,
+  guildId,
+  hedefKanal = null,
+  kanaliDegistir = false,
+}) {
   const oncekiIslem = guncellemeKuyruklari.get(guildId) || Promise.resolve();
   const islem = oncekiIslem.catch(() => null).then(async () => {
     const ayar = guildLiderlikMesajiGetir(guildId);
-    let kanalId = ayar?.kanalId || hedefKanal?.id;
+    const tasinacak = Boolean(
+      kanaliDegistir &&
+      hedefKanal &&
+      ayar?.mesajId &&
+      ayar.kanalId !== hedefKanal.id
+    );
+    let kanalId = kanaliDegistir && hedefKanal
+      ? hedefKanal.id
+      : ayar?.kanalId || hedefKanal?.id;
 
     if (!kanalId) {
       return { atlandi: true, sebep: 'liderlik-mesaji-yok' };
@@ -94,6 +125,7 @@ async function liderlikMesajiniGuncelle({ client, guildId, hedefKanal = null }) 
     let mesaj = null;
     let yenidenOlusturuldu = false;
     let sabitlemeHatasi = null;
+    let yeniMesajOlusturuldu = false;
 
     if (ayar?.mesajId && ayar.kanalId === kanal.id) {
       try {
@@ -111,8 +143,8 @@ async function liderlikMesajiniGuncelle({ client, guildId, hedefKanal = null }) 
 
     if (!mesaj) {
       mesaj = await kanal.send({ embeds, allowedMentions: { parse: [] } });
+      yeniMesajOlusturuldu = true;
       yenidenOlusturuldu = Boolean(ayar?.mesajId);
-      guildLiderlikMesajiKaydet({ guildId, kanalId: kanal.id, mesajId: mesaj.id });
     }
 
     if (hedefKanal && !mesaj.pinned) {
@@ -122,7 +154,20 @@ async function liderlikMesajiniGuncelle({ client, guildId, hedefKanal = null }) 
       });
     }
 
-    return { mesaj, yenidenOlusturuldu, sabitlemeHatasi };
+    if (tasinacak && sabitlemeHatasi) {
+      await mesaj.delete().catch(() => null);
+      return { tasimaHatasi: sabitlemeHatasi };
+    }
+
+    if (yeniMesajOlusturuldu) {
+      guildLiderlikMesajiKaydet({ guildId, kanalId: kanal.id, mesajId: mesaj.id });
+    }
+
+    if (tasinacak) {
+      await eskiMesajiSil(client, ayar);
+    }
+
+    return { mesaj, yenidenOlusturuldu, sabitlemeHatasi, tasindi: tasinacak };
   });
 
   guncellemeKuyruklari.set(guildId, islem);

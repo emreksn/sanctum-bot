@@ -22,6 +22,8 @@ npm start
 
 Sunucu yöneticisi `/hedef-skor` komutunu liderlik tablosunun bulunacağı kanalda bir kez çalıştırır. Bot tek bir embed mesajı oluşturur ve sabitler. Komut tekrar çalıştırılırsa yeni mesaj göndermek yerine mevcut mesaja özel bir bağlantı döndürür.
 
+Tabloyu daha sonra başka bir kanala taşımak için `/hedef-skor kanal:#yeni-kanal` kullanılır. Bot yeni mesajı oluşturup sabitledikten sonra eski mesajı kaldırır.
+
 Tablo şu işlemlerden sonra otomatik güncellenir:
 
 - Bir oyuncunun `/katıl` ile liderliğe katılması
