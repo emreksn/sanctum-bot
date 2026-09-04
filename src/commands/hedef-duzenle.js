@@ -80,6 +80,7 @@ module.exports = {
         content: `#${sira} hedef adı değiştirildi:\nEski: **${sonuc.eskiAd}**\nYeni: **${sonuc.hedef.ad}**`,
         ephemeral: true,
       });
+      await liderlikMesajiniSessizceGuncelle(interaction);
       return;
     }
 

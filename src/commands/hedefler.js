@@ -12,7 +12,10 @@ module.exports = {
     const hedefler = guildHedefleriniGetir(interaction.guildId);
 
     if (hedefler.length === 0) {
-      await interaction.reply('Henüz hedef eklenmemiş. /hedef-ekle ile ilk hedefi ekleyebilirsin.');
+      await interaction.reply({
+        content: 'Henüz hedef eklenmemiş. /hedef-ekle ile ilk hedefi ekleyebilirsin.',
+        ephemeral: true,
+      });
       return;
     }
 
@@ -30,12 +33,14 @@ module.exports = {
 
     await interaction.reply({
       content: mesajlar[0],
+      ephemeral: true,
       allowedMentions: { users: [] },
     });
 
     for (const mesaj of mesajlar.slice(1)) {
       await interaction.followUp({
         content: mesaj,
+        ephemeral: true,
         allowedMentions: { users: [] },
       });
     }

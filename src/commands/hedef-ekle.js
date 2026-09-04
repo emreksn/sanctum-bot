@@ -1,5 +1,6 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const { hedefEkle } = require('../services/hedef-deposu');
+const { liderlikMesajiniSessizceGuncelle } = require('../services/liderlik-mesaji-servisi');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -51,5 +52,6 @@ module.exports = {
       content: `Hedef eklendi: **${sonuc.hedef.ad}** (${sonuc.hedef.puan} puan)`,
       ephemeral: true,
     });
+    await liderlikMesajiniSessizceGuncelle(interaction);
   },
 };

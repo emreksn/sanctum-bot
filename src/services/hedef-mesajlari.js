@@ -52,6 +52,20 @@ function hedefSatiriOlustur(hedef, index) {
   return `${index + 1}. ${hedef.ad} - ${hedef.puan} puan - ${durum}`;
 }
 
+function sabitHedefSatirlariOlustur(hedefler) {
+  if (hedefler.length === 0) {
+    return ['Henüz görev eklenmemiş.'];
+  }
+
+  return hedefler.map((hedef, index) => {
+    const durum = hedef.tamamlayanId
+      ? `✅ ~~${hedef.ad}~~ — **${hedef.puan}p** • <@${hedef.tamamlayanId}>`
+      : `⬜ ${hedef.ad} — **${hedef.puan}p**`;
+
+    return `${index + 1}. ${durum}`;
+  });
+}
+
 function liderSatirlariOlustur(puanTablosu, secenekler = {}) {
   return [
     ...(secenekler.baslikEkle === false ? [] : ['**🏆 Liderler**']),
@@ -67,5 +81,6 @@ module.exports = {
   mesajlariBol,
   hedefSatiriOlustur,
   liderSatirlariOlustur,
+  sabitHedefSatirlariOlustur,
   tamamlanmaTarihiniFormatla,
 };

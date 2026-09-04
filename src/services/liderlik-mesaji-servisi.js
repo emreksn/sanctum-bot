@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { guildHedefleriniGetir, puanTablosuOlustur } = require('./hedef-deposu');
-const { liderSatirlariOlustur } = require('./hedef-mesajlari');
+const { liderSatirlariOlustur, sabitHedefSatirlariOlustur } = require('./hedef-mesajlari');
 const { guildPuanTablosunaKatilimcilariEkle } = require('./katilimci-deposu');
 const {
   guildLiderlikMesajiGetir,
@@ -19,9 +19,13 @@ function liderlikEmbedleriniOlustur(guildId) {
     guildId,
     puanTablosuOlustur(hedefler),
   );
-  const satirlar = liderSatirlariOlustur(puanTablosu, {
-    baslikEkle: false,
-  });
+  const satirlar = [
+    '**🎯 Görevler**',
+    ...sabitHedefSatirlariOlustur(hedefler),
+    '',
+    '**🏆 Liderlik Tablosu**',
+    ...liderSatirlariOlustur(puanTablosu, { baslikEkle: false }),
+  ];
   const aciklamalar = [];
   let aktif = '';
   let toplamUzunluk = 0;
@@ -58,7 +62,7 @@ function liderlikEmbedleriniOlustur(guildId) {
 
     if (index === 0) {
       embed
-        .setTitle('🏆 Liderlik Tablosu')
+        .setTitle('Yeni Lig Takip Panosu')
         .setFooter({ text: 'Yeni lig: 4 Eylül 2026, 22:00 GMT+2 • Otomatik güncellenir' })
         .setTimestamp();
     }
