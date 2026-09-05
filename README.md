@@ -62,6 +62,8 @@ Bu bot bir worker process olarak çalışır ve port açmaz. Kalıcı liderlik, 
 
 Container açılışında slash komutları üç kez kaydetmeyi dener. Discord REST geçici olarak erişilemezse kayıt hatası loglanır fakat bot yine de başlatılır.
 
+Discord Gateway bağlantısı geçici bir ağ hatasıyla kurulamazsa bot 5 saniyeden başlayan ve en fazla 60 saniyeye çıkan aralıklarla otomatik olarak tekrar bağlanmayı dener. Container DNS çözümlemesi olası IPv6 rota sorunlarına karşı IPv4 öncelikli çalışır.
+
 ```bash
 docker build -t sanctum-bot .
 docker run --env-file .env sanctum-bot
