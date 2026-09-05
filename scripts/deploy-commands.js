@@ -1,6 +1,7 @@
 const { REST, Routes } = require('discord.js');
 const { config } = require('../src/config/env');
 const { loadCommands } = require('../src/handlers/command-handler');
+const { discordAginiKontrolEt } = require('./discord-network-check');
 
 const MAKSIMUM_DENEME = 3;
 
@@ -40,7 +41,8 @@ async function main() {
   console.log(`${commands.length} global komut kaydedildi.`);
 }
 
-main().catch((error) => {
+main().catch(async (error) => {
   console.error(error);
+  await discordAginiKontrolEt(config);
   process.exitCode = 1;
 });

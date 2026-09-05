@@ -64,6 +64,8 @@ Container açılışında slash komutları üç kez kaydetmeyi dener. Discord RE
 
 Discord Gateway bağlantısı geçici bir ağ hatasıyla kurulamazsa bot 5 saniyeden başlayan ve en fazla 60 saniyeye çıkan aralıklarla otomatik olarak tekrar bağlanmayı dener. Container DNS çözümlemesi olası IPv6 rota sorunlarına karşı IPv4 öncelikli çalışır.
 
+Slash komut kaydı üç denemeden sonra hâlâ başarısızsa deployment loglarına otomatik ve güvenli bir ağ teşhisi yazılır. Bu teşhis genel HTTPS, Discord public API, bot token doğrulaması ve client ID eşleşmesini kontrol eder; token değerini hiçbir zaman loglamaz.
+
 ```bash
 docker build -t sanctum-bot .
 docker run --env-file .env sanctum-bot
