@@ -11,4 +11,4 @@ COPY src ./src
 COPY scripts ./scripts
 COPY data ./data
 
-CMD ["sh", "-c", "npm run deploy && npm start"]
+CMD ["sh", "-c", "npm run deploy || echo '[startup] Komut kaydı başarısız; bot yine de başlatılıyor.'; exec npm start"]

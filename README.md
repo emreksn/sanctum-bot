@@ -60,6 +60,8 @@ Yeni lig challenge listesi `src/config/yeni-lig-hedefleri.json` dosyasında tutu
 
 Bu bot bir worker process olarak çalışır ve port açmaz. Kalıcı liderlik, hedef ve rol kayıtlarının deployment sonrasında korunması için Dokploy üzerinde `/app/data` dizinine volume bağla.
 
+Container açılışında slash komutları üç kez kaydetmeyi dener. Discord REST geçici olarak erişilemezse kayıt hatası loglanır fakat bot yine de başlatılır.
+
 ```bash
 docker build -t sanctum-bot .
 docker run --env-file .env sanctum-bot
